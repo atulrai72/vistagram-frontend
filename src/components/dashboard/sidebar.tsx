@@ -11,9 +11,11 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/features/authentication/use-user";
 
 export default function SideBar() {
   const navigate = useNavigate();
+  const {user}  = useUser();
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -72,7 +74,7 @@ export default function SideBar() {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span className="hidden md:block ml-2">Profile</span>
+          <span className="hidden md:block ml-2">{user?.name}</span>
         </Link>
 
         <div className="hidden md:block mt-auto">

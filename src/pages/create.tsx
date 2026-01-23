@@ -1,28 +1,29 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ImagePlus, X, Loader2, Video } from "lucide-react";
 import toast from "react-hot-toast";
+import { useUser } from "@/features/authentication/use-user";
+import { useUploadPost } from "@/features/create/use-create";
 
 export default function CreatePost() {
-  const navigate = useNavigate();
+  const {user} = useUser();
+  const {upload, isPending} = useUploadPost();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [fileType, setFileType] = useState<"image" | "video" | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [caption, setCaption] = useState("");
+  // const [caption, setCaption] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    console.log(selectedFile);
     if (selectedFile) {
       setFile(selectedFile);
       setPreview(URL.createObjectURL(selectedFile));
 
-      // Determine if it is video or image
       if (selectedFile.type.startsWith("video/")) {
         setFileType("video");
       } else {
@@ -31,12 +32,10 @@ export default function CreatePost() {
     }
   };
 
-  // Trigger file input click
   const handleSelectClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Remove selected media
   const clearMedia = () => {
     setFile(null);
     setPreview(null);
@@ -47,17 +46,7 @@ export default function CreatePost() {
     if (!file) return toast.error("Please select a photo or video first");
 
     setIsLoading(true);
-
-    // TODO: Connect to backend
-    // const formData = new FormData();
-    // formData.append("media", file); // Backend will handle if it's video or img
-    // formData.append("caption", caption);
-
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success("Post created successfully!");
-      navigate("/dashboard");
-    }, 1500);
+    upload(file);
   };
 
   return (
@@ -113,28 +102,27 @@ export default function CreatePost() {
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
-                accept="image/*, video/*" // Accepts both types
+                accept="image/*, video/*"
                 onChange={handleFileChange}
               />
             </div>
           )}
         </div>
 
-        {/* Caption Area */}
         <div className="p-6 flex flex-col gap-4">
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
               <img src="https://github.com/shadcn.png" alt="User" />
             </div>
-            <span className="font-semibold text-sm mt-1">your_username</span>
+            <span className="font-semibold text-sm mt-1">{user?.name}</span>
           </div>
-
-          <Textarea
+          {/* TODO: Add the captions */}
+          {/* <Textarea
             placeholder="Write a caption..."
             className="border-none resize-none focus-visible:ring-0 p-0 text-base min-h-[100px]"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-          />
+          /> */}
 
           <div className="flex justify-between items-center pt-4 border-t">
             <span className="text-xs text-gray-400">
@@ -142,7 +130,7 @@ export default function CreatePost() {
                 ? "Video will be processed before publishing"
                 : "Your post will be shared with your followers"}
             </span>
-            <Button onClick={handlePost} disabled={!file || isLoading}>
+            <Button onClick={handlePost} disabled={!file || isLoading || isPending}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
