@@ -111,7 +111,7 @@ export function LoginForm() {
           <Link to="/register">Don't have an account?</Link>
         </Button>
         <Button type="button" size="sm" variant="link">
-          <Link to="/register">Forgot Password?</Link>
+          <Link to="/forgot-password">Forgot Password?</Link>
         </Button>
       </div>
     </Card>

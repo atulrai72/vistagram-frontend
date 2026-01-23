@@ -18,3 +18,14 @@ export const registerSchema = z.object({
     .min(6, { message: "Password must be more than 6 characters" })
     .max(100, { message: "Password must be less than 100 characters" }),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .email()
+    .max(50, { message: "email id not be greater than 50 characters" }),
+});
+
+export const resetSchema = z.object({
+  otp: z.number(),
+  newPassword: z.string(),
+});

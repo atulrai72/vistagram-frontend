@@ -10,6 +10,8 @@ import { UpdateAccountPage } from "./pages/user-management";
 import ProtectedRoutes from "./components/auth/protected-route";
 import AppLayout from "./components/app-layout";
 import CreatePost from "./pages/create";
+import { Forgot } from "./pages/forgot-password";
+import { Reset } from "./pages/reset-password";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +41,8 @@ export default function App() {
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<Forgot />} />
+          <Route path="/reset-password" element={<Reset />} />
         </Routes>
       </BrowserRouter>
       <Toaster
