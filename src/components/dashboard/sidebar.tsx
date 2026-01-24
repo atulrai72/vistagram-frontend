@@ -20,6 +20,7 @@ export default function SideBar() {
     localStorage.removeItem("token");
     navigate("/login");
   };
+  console.log(user)
 
   return (
     <aside
@@ -71,7 +72,7 @@ export default function SideBar() {
           className="flex items-center hover:cursor-pointer"
         >
           <Avatar className="w-8 h-8">
-            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarImage src={user?.avatar_url} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className="hidden md:block ml-2">{user?.name}</span>

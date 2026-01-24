@@ -1,21 +1,20 @@
-// import type { uploadSchema } from "@/schemas";
-// import { signup } from "@/services/api-auth";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-// import * as z from "zod";
 import toast from "react-hot-toast";
 import { createPost } from "@/services/api-create";
 
 export function useUploadPost() {
-//   const queryClient = useQueryClient();
+  //   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // z.infer<typeof uploadPostSchema>
+
   const { mutate: upload, isPending } = useMutation({
-    mutationFn: ( file: any) =>
-      createPost(file),
+    mutationFn: ({ caption, file }: any) =>
+      createPost({ caption, file }),
     onSuccess: () => {
-     toast.success("Post uploaded succesfully!")
-     navigate("/dashboard");
+      toast.success("Post uploaded succesfully!");
+      navigate("/dashboard");
     },
     onError: (error) => {
       console.log("Error", error);

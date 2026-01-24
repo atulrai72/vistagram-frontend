@@ -1,7 +1,9 @@
-// components/Posts.tsx
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { usePosts } from "./use-posts";
 import { throttle } from "lodash";
+import { CommentDialog } from "@/features/comment-modal/comment-modal";
+
+// TODO: This should be in the features folder
 
 export default function Posts() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
@@ -41,26 +43,30 @@ export default function Posts() {
           className="w-full max-w-md bg-white rounded-lg shadow-md my-4 overflow-hidden"
         >
           <div className="flex items-center p-3 border-b">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-              {post.author.name[0]}
+            <div className="w-8 h-8  rounded-full flex items-center justify-center text-white font-bold">
+              <img src={post.author.avatar_url}/>
             </div>
             <span className="ml-3 font-semibold text-gray-800">
               {post.author.name}
             </span>
           </div>
-          <img
+          {post.file_type === "video" ? <video
             src={post.file_url}
-            alt="Post content"
+            controls
+            loop
             className="w-full h-96 object-cover"
-          />
+          /> : <img src={post.file_url}/> }
+          
           <div className="p-3">
             <div className="flex gap-4 mb-2">
               <button className="text-2xl hover:text-red-500">♡</button>
-              <button className="text-2xl hover:text-blue-500">💬</button>
+              <CommentDialog postId={post.id}>
+                <button className="text-2xl hover:text-blue-500">💬</button>
+              </CommentDialog>
             </div>
             <p>
               <span className="font-bold mr-2">{post.author.name}</span>
-              Just uploaded a new photo!
+              {post.caption}
             </p>
           </div>
         </div>

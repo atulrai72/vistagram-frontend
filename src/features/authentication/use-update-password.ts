@@ -10,7 +10,7 @@ export function useUpdatePassword() {
     mutationFn: ({ oldPassword, newPassword, confirmPassword }: z.infer<typeof passwordSchema>) =>
       updatePassword({ oldPassword, newPassword, confirmPassword }),
     onSuccess: () => {
-    toast.success("Password updated successfully")
+    toast.success("Password updated successfully");
     },
     onError: (error) => {
       console.log("Error", error);

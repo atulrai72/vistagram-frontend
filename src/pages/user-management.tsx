@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useUpdatePassword } from "@/features/authentication/use-update-password";
+import { useUser } from "@/features/authentication/use-user";
+import { useUpdateUser } from "@/features/user-management/use-update-user";
 
 export const profileSchema = z.object({
-  email: z.string().email(),
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email().optional(),
+  name: z.string().min(2, "Name must be at least 2 characters").optional(),
   avatar: z.any().optional(),
 });
 
@@ -43,16 +45,34 @@ export function UpdateAccountPage() {
 }
 
 function ProfileForm() {
+  const {user}  = useUser();
+  const { updateUserApi, isPending } = useUpdateUser();
+  
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      email: "demo@example.com",
-      fullName: "Stefan Momcilovic",
+      email: user?.email,
+      name: user?.name,
     },
   });
 
   function onSubmit(data: z.infer<typeof profileSchema>) {
-    console.log("Profile Data:", data);
+    
+    if(data.avatar === undefined){
+      const {name} = data;
+      updateUserApi({name})
+    }
+
+    if(data.name === user?.name && data.avatar !== undefined){
+       const {avatar} = data;
+       const name = user?.name;
+      updateUserApi({name, avatar})
+    }
+
+    if(data.avatar !== undefined && data.name !== user?.name){
+      const {name, avatar} = data;
+      updateUserApi({name, avatar})
+    }
   }
 
   return (
@@ -95,7 +115,7 @@ function ProfileForm() {
               )}
             />
             <Controller
-              name="fullName"
+              name="name"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field
@@ -114,6 +134,7 @@ function ProfileForm() {
                       id="fullName"
                       className="border-slate-200"
                       aria-invalid={fieldState.invalid}
+                      disabled = {isPending}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -151,6 +172,7 @@ function ProfileForm() {
                       }}
                       className="file:bg-indigo-600 file:text-white file:border-none file:mr-4 file:px-4 file:py-2 file:rounded-md file:font-medium hover:file:bg-indigo-700 cursor-pointer border-none shadow-none pl-0"
                       aria-invalid={fieldState.invalid}
+                      disabled = {isPending}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -171,6 +193,7 @@ function ProfileForm() {
             </Button>
             <Button
               type="submit"
+              form="profile-form"
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
             >
               Update account
@@ -202,7 +225,7 @@ function PasswordForm() {
       { oldPassword, newPassword, confirmPassword },
       {
         onSettled: () => {
-          // TODO:Kuch karenge iska bhi
+          
         },
       },
     );
@@ -318,6 +341,7 @@ function PasswordForm() {
               type="button"
               className="text-slate-600 border-slate-200"
               disabled={isPending}
+              onClick={() => form.reset()}
             >
               Cancel
             </Button>

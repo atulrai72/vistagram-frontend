@@ -26,17 +26,19 @@ export function Reset() {
 
   const form = useForm<z.infer<typeof resetSchema>>({
     resolver: zodResolver(resetSchema),
-    defaultValues: {
-      newPassword: "",
-    },
+    defaultValues:{
+      otp: "",
+      newPassword: ""
+    }
   });
 
   function onSubmit({ otp, newPassword }: z.infer<typeof resetSchema>) {
+    if(!otp || !newPassword) return;
     resetApi(
       { otp, newPassword },
       {
         onSettled: () => {},
-      },
+      }, 
     );
   }
 
@@ -59,7 +61,6 @@ export function Reset() {
                     <Input
                       {...field}
                       id="otp"
-                      type="number"
                       aria-invalid={fieldState.invalid}
                       disabled={isPending}
                     />

@@ -1,5 +1,7 @@
 // api-create.ts
+import type { profileSchema } from "@/pages/user-management";
 import axios from "axios";
+import * as z from "zod";
 
 const api = axios.create({
   baseURL: "http://localhost:3001/api",
@@ -13,17 +15,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const createPost = async ({ caption, file }: any) => {
+export const updateUser = async ({name, avatar } : z.infer<typeof profileSchema>) => {
   const formData = new FormData();
+  
+  formData.append("file", avatar); 
+  formData.append("name", name!);
 
-  formData.append("file", file);
-  formData.append("caption", caption);
-
-  const { data } = await api.post("/posts/upload", formData, {
+  const { data } = await api.put("/auth/update-user", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
-
+  
   return data;
 };

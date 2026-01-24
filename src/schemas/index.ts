@@ -26,6 +26,23 @@ export const forgotPasswordSchema = z.object({
 });
 
 export const resetSchema = z.object({
-  otp: z.number(),
-  newPassword: z.string(),
+  otp: z.string().min(4, { message: "Otp is required" }),
+  newPassword: z.string().min(6, { message: "Password is required" }),
+});
+
+export const commentSchema = z.object({
+  comment: z
+    .string()
+    .max(500, { message: "Please write your comment upto 500 characters." }),
+  postId: z.number(),
+});
+
+export const likeSchema = z.object({
+  like: z.number(),
+  postId: z.number(),
+});
+
+export const uploadPostSchema = z.object({
+  description: z.string().min(2, "Description must be at least 2 characters"),
+  file: z.any(),
 });

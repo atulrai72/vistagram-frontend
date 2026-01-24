@@ -4,9 +4,12 @@ export interface Post {
   id: number;
   file_url: string;
   userId: number;
+  file_type: string,
+  caption: string,
   author: {
     name: string;
     email?: string;
+    avatar_url: string
   };
   comments: any[];
 }

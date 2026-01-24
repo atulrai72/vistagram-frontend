@@ -4,17 +4,17 @@ import { ImagePlus, X, Loader2, Video } from "lucide-react";
 import toast from "react-hot-toast";
 import { useUser } from "@/features/authentication/use-user";
 import { useUploadPost } from "@/features/create/use-create";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function CreatePost() {
-  const {user} = useUser();
-  const {upload, isPending} = useUploadPost();
+  const { user } = useUser();
+  const { upload, isPending } = useUploadPost();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
   const [fileType, setFileType] = useState<"image" | "video" | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  // const [caption, setCaption] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [caption, setCaption] = useState("");
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,9 +44,7 @@ export default function CreatePost() {
 
   const handlePost = async () => {
     if (!file) return toast.error("Please select a photo or video first");
-
-    setIsLoading(true);
-    upload(file);
+    upload({ caption, file });
   };
 
   return (
@@ -116,13 +114,13 @@ export default function CreatePost() {
             </div>
             <span className="font-semibold text-sm mt-1">{user?.name}</span>
           </div>
-          {/* TODO: Add the captions */}
-          {/* <Textarea
+          <div></div>
+          <Textarea
             placeholder="Write a caption..."
             className="border-none resize-none focus-visible:ring-0 p-0 text-base min-h-[100px]"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-          /> */}
+          />
 
           <div className="flex justify-between items-center pt-4 border-t">
             <span className="text-xs text-gray-400">
@@ -130,8 +128,11 @@ export default function CreatePost() {
                 ? "Video will be processed before publishing"
                 : "Your post will be shared with your followers"}
             </span>
-            <Button onClick={handlePost} disabled={!file || isLoading || isPending}>
-              {isLoading ? (
+            <Button
+              onClick={handlePost}
+              disabled={!file || isPending}
+            >
+              {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Sharing...

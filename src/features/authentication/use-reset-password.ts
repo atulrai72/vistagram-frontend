@@ -12,7 +12,7 @@ export function useReset() {
     mutationFn: ({ otp, newPassword }: z.infer<typeof resetSchema>) =>
       reset({ otp, newPassword }),
     onSuccess: () => {
-      toast.success("Email changed successfully!");
+      toast.success("Password changed successfully!");
       navigate("/login");
     },
     onError: (error) => {
