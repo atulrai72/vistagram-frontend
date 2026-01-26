@@ -8,7 +8,7 @@ export const loginSchema = z.object({
 export const registerSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "Name must be of minimum 3 characters." })
+    .min(2, { message: "Name must be of minimum 2 characters" })
     .max(20, { message: "Name must be max upto 20 characters" }),
   email: z
     .email()
@@ -33,7 +33,7 @@ export const resetSchema = z.object({
 export const commentSchema = z.object({
   comment: z
     .string()
-    .max(500, { message: "Please write your comment upto 500 characters." }),
+    .max(500, { message: "Please write your comment upto 500 characters" }),
   postId: z.number(),
 });
 
@@ -43,6 +43,6 @@ export const likeSchema = z.object({
 });
 
 export const uploadPostSchema = z.object({
-  description: z.string().min(2, "Description must be at least 2 characters"),
+  description: z.string().min(2, "Description must be at least 2 characters long"),
   file: z.any(),
 });

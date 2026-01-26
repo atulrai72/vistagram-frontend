@@ -51,11 +51,14 @@ export default function Posts() {
             </span>
           </div>
           {post.file_type === "video" ? <video
-            src={post.file_url}
+            id="player"
             controls
-            loop
+            playsInline
             className="w-full h-96 object-cover"
-          /> : <img src={post.file_url}/> }
+          > 
+          <source src={post.file_url} type="video/mp4"/>
+          </video>
+          : <img src={post.file_url}/> }
           
           <div className="p-3">
             <div className="flex gap-4 mb-2">

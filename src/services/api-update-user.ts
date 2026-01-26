@@ -15,17 +15,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const updateUser = async ({name, avatar } : z.infer<typeof profileSchema>) => {
+export const updateUser = async ({ name, avatar }: z.infer<typeof profileSchema>) => {
   const formData = new FormData();
-  
-  formData.append("file", avatar); 
-  formData.append("name", name!);
+
+  if (name) formData.append("name", name);
+
+  if (avatar instanceof File) {
+    formData.append("file", avatar);
+  }
 
   const { data } = await api.put("/auth/update-user", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+    headers: { "Content-Type": "multipart/form-data" },
   });
-  
+
   return data;
 };

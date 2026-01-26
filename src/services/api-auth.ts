@@ -19,6 +19,7 @@ api.interceptors.request.use((config) => {
 });
 
 export async function signup({
+  name,
   email,
   password,
 }: z.infer<typeof registerSchema>) {

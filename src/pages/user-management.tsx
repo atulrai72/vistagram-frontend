@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { useUpdatePassword } from "@/features/authentication/use-update-password";
 import { useUser } from "@/features/authentication/use-user";
 import { useUpdateUser } from "@/features/user-management/use-update-user";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 export const profileSchema = z.object({
   email: z.string().email().optional(),
@@ -23,9 +25,9 @@ export const profileSchema = z.object({
 
 export const passwordSchema = z
   .object({
-    oldPassword: z.string(),
+    oldPassword: z.string({ message: "Old password is required" }),
     newPassword: z.string().min(6, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
+    confirmPassword: z.string({ message: "Confirm password is required" }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match",
@@ -36,18 +38,17 @@ export function UpdateAccountPage() {
   return (
     <div className="space-y-8 p-6 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold text-slate-800">Update your account</h1>
-
       <ProfileForm />
-
       <PasswordForm />
     </div>
   );
 }
 
 function ProfileForm() {
-  const {user}  = useUser();
+  const { user } = useUser();
   const { updateUserApi, isPending } = useUpdateUser();
-  
+  const [inputKey, setInputKey] = useState(Date.now());
+
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -57,22 +58,24 @@ function ProfileForm() {
   });
 
   function onSubmit(data: z.infer<typeof profileSchema>) {
-    
-    if(data.avatar === undefined){
-      const {name} = data;
-      updateUserApi({name})
+
+    const hasAvatar = data.avatar !== undefined;
+    const hasNameChanged = data.name !== user?.name;
+
+    if (!hasAvatar && !hasNameChanged) {
+      return toast.error("No changes detected");
     }
 
-    if(data.name === user?.name && data.avatar !== undefined){
-       const {avatar} = data;
-       const name = user?.name;
-      updateUserApi({name, avatar})
-    }
-
-    if(data.avatar !== undefined && data.name !== user?.name){
-      const {name, avatar} = data;
-      updateUserApi({name, avatar})
-    }
+    updateUserApi(data, {
+      onSuccess: () => {
+        form.resetField("avatar");
+        setInputKey(Date.now());
+      },
+      onError: () => {
+        form.resetField("avatar");
+        setInputKey(Date.now());
+      }
+    });
   }
 
   return (
@@ -134,7 +137,7 @@ function ProfileForm() {
                       id="fullName"
                       className="border-slate-200"
                       aria-invalid={fieldState.invalid}
-                      disabled = {isPending}
+                      disabled={isPending}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -172,7 +175,8 @@ function ProfileForm() {
                       }}
                       className="file:bg-indigo-600 file:text-white file:border-none file:mr-4 file:px-4 file:py-2 file:rounded-md file:font-medium hover:file:bg-indigo-700 cursor-pointer border-none shadow-none pl-0"
                       aria-invalid={fieldState.invalid}
-                      disabled = {isPending}
+                      disabled={isPending}
+                      key={inputKey}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -215,20 +219,15 @@ function PasswordForm() {
     },
   });
 
-  function onSubmit({
-    oldPassword,
-    newPassword,
-    confirmPassword,
-  }: z.infer<typeof passwordSchema>) {
-    console.log(oldPassword, newPassword, confirmPassword);
-    updatePasswordApi(
-      { oldPassword, newPassword, confirmPassword },
-      {
-        onSettled: () => {
-          
-        },
+  function onSubmit(data: z.infer<typeof passwordSchema>) {
+    updatePasswordApi(data, {
+      onSuccess: () => {
+        form.reset();
       },
-    );
+      onError: () => {
+        form.reset();
+      },
+    });
   }
 
   return (

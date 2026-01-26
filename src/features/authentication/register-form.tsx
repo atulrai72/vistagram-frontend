@@ -23,7 +23,7 @@ import { useSignup } from "./use-signup";
 
 
 export function RegisterForm() {
-  const {signupApi, isPending} = useSignup();
+  const { signupApi, isPending } = useSignup();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -33,11 +33,11 @@ export function RegisterForm() {
     },
   });
 
-  function onSubmit({name, email, password }: z.infer<typeof registerSchema>) {
-      signupApi(
-        {name, email, password },
-      );
-    }
+  function onSubmit({ name, email, password }: z.infer<typeof registerSchema>) {
+    signupApi(
+      { name, email, password },
+    );
+  }
 
   return (
     <Card className="w-full sm:max-w-md">

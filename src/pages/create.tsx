@@ -44,7 +44,14 @@ export default function CreatePost() {
 
   const handlePost = async () => {
     if (!file) return toast.error("Please select a photo or video first");
-    upload({ caption, file });
+    upload({ caption, file }, {
+      onSuccess: () => {
+        clearMedia();
+      },
+      onError: () => {
+        clearMedia();
+      },
+    });
   };
 
   return (
@@ -110,7 +117,7 @@ export default function CreatePost() {
         <div className="p-6 flex flex-col gap-4">
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-              <img src="https://github.com/shadcn.png" alt="User" />
+              <img src={user?.avatar_url} alt="User" /> ..................
             </div>
             <span className="font-semibold text-sm mt-1">{user?.name}</span>
           </div>
