@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import SideBar from "@/components/dashboard/sidebar"; // Adjust path if needed
+import SideBar from "@/components/sidebar"; // Adjust path if needed
 
 export default function AppLayout() {
   return (

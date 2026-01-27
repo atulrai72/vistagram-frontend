@@ -1,4 +1,4 @@
-import AllPosts from "@/components/dashboard/posts";
+import AllPosts from "@/features/dashboard/posts";
 
 export default function DashBoard() {
   return (

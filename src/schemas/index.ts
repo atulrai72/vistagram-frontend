@@ -37,12 +37,9 @@ export const commentSchema = z.object({
   postId: z.number(),
 });
 
-export const likeSchema = z.object({
-  like: z.number(),
-  postId: z.number(),
-});
-
 export const uploadPostSchema = z.object({
-  description: z.string().min(2, "Description must be at least 2 characters long"),
+  description: z
+    .string()
+    .min(2, "Description must be at least 2 characters long"),
   file: z.any(),
 });

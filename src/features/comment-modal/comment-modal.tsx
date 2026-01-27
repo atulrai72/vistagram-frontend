@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { commentSchema } from "@/schemas";
-import { useCommentPost, useGetComments } from "./use-comment";
+import { useCommentPost, useGetComments, useDeleteComment } from "./use-comment";
 import { Loader2 } from "lucide-react";
+import { useUser } from "../authentication/use-user";
+import { HiTrash } from "react-icons/hi2";
 
 // Add postId to props
 export function CommentDialog({
@@ -22,29 +24,34 @@ export function CommentDialog({
   children: React.ReactNode;
   postId: number;
 }) {
+  const { user } = useUser();
+  const { deleteCommentApi, isPending: isDeleting } = useDeleteComment();
   const { commentApi, isPending: isPosting } = useCommentPost();
   const { data: comments, isLoading: isLoadingComments } =
     useGetComments(postId);
-    // console.log("comments ", comments.allComments);
+  // console.log("comments ", comments.allComments);
 
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
     defaultValues: {
       comment: "",
-      postId: postId, 
+      postId: postId,
     },
   });
 
   function onSubmit(values: z.infer<typeof commentSchema>) {
-    console.log(values);
     commentApi(
       { comment: values.comment, postId: postId },
       {
         onSuccess: () => {
-          form.reset({ comment: "", postId: postId }); 
+          form.reset({ comment: "", postId: postId });
         },
       },
     );
+  }
+
+  function handleDeleteComment(id: number) {
+    deleteCommentApi(id);
   }
 
   return (
@@ -67,14 +74,19 @@ export function CommentDialog({
             comments?.map((c: any, index: number) => (
               <div key={index} className="flex gap-3 items-start">
                 {/* Avatar Placeholder */}
+
+
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600 shrink-0">
-                  {c.user?.name?.[0] || "?"}
+                  {c.user?.avatar_url ? <img src={c.user?.avatar_url} alt={c.user?.name} className="w-8 h-8 rounded-full object-cover shrink-0" /> : c.user?.name?.[0] || "?"}
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs font-semibold text-gray-700">
                     {c.user?.name || "User"}
                   </span>
-                  <p className="text-sm text-gray-600">{c.comment}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-gray-600">{c.comment}</p>
+                    {user?.id === c.userId && <button onClick={() => handleDeleteComment(c.id)}><HiTrash className="hover:text-red-500 hover:cursor-pointer" /></button>}
+                  </div>
                 </div>
               </div>
             ))

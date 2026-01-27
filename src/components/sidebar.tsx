@@ -15,7 +15,7 @@ import { useUser } from "@/features/authentication/use-user";
 
 export default function SideBar() {
   const navigate = useNavigate();
-  const {user}  = useUser();
+  const { user } = useUser();
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");

@@ -29,6 +29,12 @@ export const postComments = async ({
 
 // GET all comments for a post
 export const getComments = async (postId: number) => {
-  const { data } = await api.get(`/comments/comment/${postId}`);    
+  const { data } = await api.get(`/comments/comment/${postId}`);
   return data.allComments;
+};
+
+// Delete a comment
+export const deleteComment = async (id: number) => {
+  const { data } = await api.delete(`/comments/delete-comment/${id}`);
+  return data;
 };

@@ -1,19 +1,15 @@
-import type { commentSchema } from "@/schemas";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import * as z from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { postComments, getComments } from "@/services/api-comment";
+import { toogleLike } from "@/services/api-like";
 
-export function useCommentPost() {
+export function useToogleLike() {
   const queryClient = useQueryClient();
 
-  const { mutate: commentApi, isPending } = useMutation({
-    mutationFn: ({ comment, postId }: z.infer<typeof commentSchema>) =>
-      postComments({ comment, postId }),
-    onSuccess: (_, variables) => {
-      toast.success("Comment posted successfully!");
+  const { mutate: toogleLikeApi, isPending } = useMutation({
+    mutationFn: (postId: number) => toogleLike(postId),
+    onSuccess: (_) => {
       queryClient.invalidateQueries({
-        queryKey: ["comments", variables.postId],
+        queryKey: ["posts-feed"],
       });
     },
     onError: (error) => {
@@ -22,15 +18,5 @@ export function useCommentPost() {
     },
   });
 
-  return { commentApi, isPending };
-}
-
-export function useGetComments(postId: number) {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["comments", postId],
-    queryFn: () => getComments(postId),
-    enabled: !!postId, // Only fetch if postId exists
-  });
-
-  return { data, isLoading, error };
+  return { toogleLikeApi, isPending };
 }

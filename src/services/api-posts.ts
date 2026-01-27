@@ -4,14 +4,17 @@ export interface Post {
   id: number;
   file_url: string;
   userId: number;
-  file_type: string,
-  caption: string,
+  file_type: string;
+  caption: string;
   author: {
+    id: number;
     name: string;
     email?: string;
-    avatar_url: string
+    avatar_url: string;
   };
-  comments: any[];
+  likeCount: number;
+  commentCount: number;
+  hasLiked: boolean;
 }
 
 interface PostsResponse {
@@ -37,5 +40,10 @@ export const fetchPosts = async ({ pageParam }: { pageParam?: number }) => {
   const { data } = await api.get<PostsResponse>("/posts/all-posts-with-user", {
     params: { cursor: pageParam },
   });
+  return data;
+};
+
+export const deletePost = async (postId: number) => {
+  const { data } = await api.delete<Post>(`/posts/delete/${postId}`);
   return data;
 };

@@ -2,7 +2,11 @@ import type { commentSchema } from "@/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as z from "zod";
 import toast from "react-hot-toast";
-import { postComments, getComments } from "@/services/api-comment";
+import {
+  postComments,
+  getComments,
+  deleteComment,
+} from "@/services/api-comment";
 
 export function useCommentPost() {
   const queryClient = useQueryClient();
@@ -33,4 +37,24 @@ export function useGetComments(postId: number) {
   });
 
   return { data, isLoading, error };
+}
+
+export function useDeleteComment() {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteCommentApi, isPending } = useMutation({
+    mutationFn: (id: number) => deleteComment(id),
+    onSuccess: () => {
+      // toast.success("Comment deleted successfully!");
+      queryClient.invalidateQueries({
+        queryKey: ["comments"],
+      });
+    },
+    onError: (error) => {
+      console.log("Error", error);
+      // toast.error("Something went wrong");
+    },
+  });
+
+  return { deleteCommentApi, isPending };
 }
