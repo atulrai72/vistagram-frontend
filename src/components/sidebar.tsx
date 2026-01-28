@@ -7,11 +7,13 @@ import {
   Heart,
   Plus,
   LogOut,
+  Settings
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/features/authentication/use-user";
+import { SearchModal } from "@/pages/search";
 
 export default function SideBar() {
   const navigate = useNavigate();
@@ -41,9 +43,11 @@ export default function SideBar() {
           <Home /> <span className="hidden md:block ml-2">Home</span>
         </Link>
 
-        <Link to="/search" className="flex items-center hover:cursor-pointer">
-          <Search /> <span className="hidden md:block ml-2">Search</span>
-        </Link>
+        <div className="flex">
+          <SearchModal>
+          <button className="flex "><Search /> <span className="hidden md:block ml-2">Search</span></button>
+        </SearchModal>
+        </div>
 
         <div className="hidden md:flex items-center hover:cursor-pointer">
           <Compass /> <span className="ml-2">Explore</span>
@@ -68,7 +72,7 @@ export default function SideBar() {
         </div>
 
         <Link
-          to="/user-management"
+          to="/profile"
           className="flex items-center hover:cursor-pointer"
         >
           <Avatar className="w-8 h-8">
@@ -76,6 +80,13 @@ export default function SideBar() {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className="hidden md:block ml-2">{user?.name}</span>
+        </Link>
+
+         <Link
+          to="/user-management"
+          className="flex items-center hover:cursor-pointer"
+        >
+          <Settings /> <span className="hidden md:block ml-2">Settings</span>
         </Link>
 
         <div className="hidden md:block mt-auto">

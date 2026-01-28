@@ -12,6 +12,8 @@ import AppLayout from "./components/app-layout";
 import CreatePost from "./pages/create";
 import { Forgot } from "./pages/forgot-password";
 import { Reset } from "./pages/reset-password";
+import Profile from "./pages/profile";
+import SpecificUserProfile from "./pages/user-profile";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +39,9 @@ export default function App() {
             <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/user-management" element={<UpdateAccountPage />} />
+            <Route path="/profile" element={<Profile/>}/>
             <Route path="/create" element={<CreatePost />} />
+            <Route path="/profile/:userId" element={<SpecificUserProfile/>}/>
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
