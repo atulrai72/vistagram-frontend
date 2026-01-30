@@ -5,9 +5,9 @@ export function useUser() {
   const { isPending, data: user } = useQuery({
     queryKey: ["user"],
     queryFn: getCurrentUser,
-    refetchInterval: 5000,
-    refetchIntervalInBackground: true,
-    retry: false,
+    // refetchInterval: 21600,
+    // refetchIntervalInBackground: true,
+    // retry: false,
   });
 
   return {

@@ -19,8 +19,6 @@ export function SearchModal({ children }: { children: React.ReactNode }) {
 
   const { searchResults } = useSearchQuery(debouncedSearchTerm);
 
-  console.log(searchResults);
-
   function handleClick(userId: number) {
     navigate(`/profile/${userId}`);
   }

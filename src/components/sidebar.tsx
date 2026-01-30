@@ -7,7 +7,7 @@ import {
   Heart,
   Plus,
   LogOut,
-  Settings
+  Settings,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -22,7 +22,6 @@ export default function SideBar() {
     localStorage.removeItem("token");
     navigate("/login");
   };
-  console.log(user)
 
   return (
     <aside
@@ -45,8 +44,10 @@ export default function SideBar() {
 
         <div className="flex">
           <SearchModal>
-          <button className="flex "><Search /> <span className="hidden md:block ml-2">Search</span></button>
-        </SearchModal>
+            <button className="flex ">
+              <Search /> <span className="hidden md:block ml-2">Search</span>
+            </button>
+          </SearchModal>
         </div>
 
         <div className="hidden md:flex items-center hover:cursor-pointer">
@@ -57,9 +58,9 @@ export default function SideBar() {
           <SquarePlay /> <span className="hidden md:block ml-2">Reels</span>
         </div>
 
-        <div className="flex items-center hover:cursor-pointer">
+        <Link to="/message" className="flex items-center hover:cursor-pointer">
           <Send /> <span className="hidden md:block ml-2">Messages</span>
-        </div>
+        </Link>
 
         <div className="hidden md:flex items-center hover:cursor-pointer">
           <Heart /> <span className="ml-2">Notifications</span>
@@ -71,10 +72,7 @@ export default function SideBar() {
           </Link>
         </div>
 
-        <Link
-          to="/profile"
-          className="flex items-center hover:cursor-pointer"
-        >
+        <Link to="/profile" className="flex items-center hover:cursor-pointer">
           <Avatar className="w-8 h-8">
             <AvatarImage src={user?.avatar_url} />
             <AvatarFallback>CN</AvatarFallback>
@@ -82,7 +80,7 @@ export default function SideBar() {
           <span className="hidden md:block ml-2">{user?.name}</span>
         </Link>
 
-         <Link
+        <Link
           to="/user-management"
           className="flex items-center hover:cursor-pointer"
         >

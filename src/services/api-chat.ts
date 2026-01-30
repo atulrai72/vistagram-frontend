@@ -1,4 +1,3 @@
-// GET the current user detail
 import axios from "axios";
 
 const api = axios.create({
@@ -14,16 +13,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getCurrentUserProfile = async () => {
-  const { data } = await api.get("/users/current-user-details");
+export const getMultualUser = async () => {
+  const { data } = await api.get(`/chat/mutual-users`);
   return data;
 };
 
-// Get the specific user detail
-
-export const getTheSpecificUserDetail = async ({ queryKey }: any) => {
-  const [_key, id] = queryKey;
-
-  const { data } = await api.get(`/users/user-detail/${id}`);
+export const assignRooms = async (id: number) => {
+  const { data } = await api.post(`/chat/assign-room/${id}`);
   return data;
 };
