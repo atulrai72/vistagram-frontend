@@ -3,19 +3,9 @@ import type { loginSchema, registerSchema } from "@/schemas";
 import axios from "axios";
 import * as z from "zod";
 
-// TODO: SignUp
-
 const api = axios.create({
   baseURL: "http://localhost:3001/api",
-  // withCredentials: true,  // TODO: I have to implement this
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  withCredentials: true, 
 });
 
 export async function signup({
@@ -24,8 +14,8 @@ export async function signup({
   password,
 }: z.infer<typeof registerSchema>) {
   try {
-    const response = await axios.post(
-      "http://127.0.0.1:3001/api/auth/sign-up",
+    const response = await api.post(
+      "/auth/sign-up",
       {
         name,
         email,
@@ -42,7 +32,7 @@ export async function signup({
 
 export async function login({ email, password }: z.infer<typeof loginSchema>) {
   try {
-    const response = await axios.post("http://127.0.0.1:3001/api/auth/login", {
+    const response = await api.post("/auth/login", {
       email,
       password,
     });
@@ -67,7 +57,7 @@ export const getCurrentUser = async () => {
 
 export const logoutUser = async () => {
   try {
-    const { data } = await api.post("/logout");
+    const { data } = await api.post("/auth/logout");
     return data;
   } catch (error: any) {
     const errorMessage = error.response?.data?.message || "Error while logout";

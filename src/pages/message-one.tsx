@@ -9,33 +9,46 @@ import { useSocket } from "@/context/socket-context";
 import { useGetChat } from "@/features/chat/use-get-chat";
 
 interface Message {
-  text: string;
+  id?: number;
+  message: string;
+  senderId: number;
+  roomId?: number;
+  createdAt?: string;
 }
 
 export default function OneToOneMessage() {
   const socket = useSocket();
-  const { user } = useUser();
+  const { user } = useUser(); 
   const { isAssigning } = useAssignRooms();
-  const { id } = useParams();
+  const { id } = useParams(); 
   const { mutualUsers } = useMutualUser();
   const { otherUser } = useOtherUserProfile(Number(id));
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [messages, setMessages] = useState<Message[]>([{ text: "Hi" }]);
+  
+  const [messages, setMessages] = useState<Message[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const {data} = useGetChat(Number(id));
+  
+  const { data: chatHistory } = useGetChat(Number(id));
+
+  useEffect(() => {
+    if (chatHistory && Array.isArray(chatHistory)) {
+      setMessages(chatHistory);
+    }
+  }, [chatHistory]);
 
   useEffect(() => {
     socket.on("connect", () => setIsConnected(true));
     socket.on("disconnect", () => setIsConnected(false));
-
-    socket.on("recieve_message", (data: { text: string }) => {
-      setMessages((prev) => [...prev, { text: data.text }]);
+   
+    socket.on("recieve_message", (data) => {
+      console.log("data", data.text);
+      setMessages((prev) => [...prev, data]);
     });
 
     return () => {
       socket.off("connect");
       socket.off("disconnect");
-      socket.off("receive_message");
+      socket.off("recieve_message"); 
     };
   }, [socket]);
 
@@ -44,10 +57,27 @@ export default function OneToOneMessage() {
 
     if (inputRef.current && inputRef.current.value.trim() !== "") {
       const text = inputRef.current.value;
+        
+      const newMessage: Message = {
+        message: text,
+        senderId: user?.id || 0,
+        roomId: Number(id),
+        createdAt: new Date().toISOString()
+      };
+
       socket.emit("message", { text, userId: user?.id, room: Number(id) });
+      
+      setMessages((prev) => [...prev, newMessage]); 
+
       inputRef.current.value = "";
     }
   }
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
 
   return (
     <div className="h-screen w-full bg-gray-100 text-black flex overflow-hidden">
@@ -61,23 +91,23 @@ export default function OneToOneMessage() {
             Mutual friends
           </p>
 
-          {mutualUsers?.map((user: any, index: number) => (
-            <Link to={`/message/${user.id}`} key={index}>
+          {mutualUsers?.map((friend: any, index: number) => (
+            <Link to={`/message/${friend.id}`} key={index}>
               <div
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 transition-colors duration-150 cursor-pointer hover:bg-gray-100",
-                  user?.id === Number(id) && "bg-gray-200",
+                  friend?.id === Number(id) && "bg-gray-200",
                 )}
               >
                 <div className="h-10 w-10 rounded-full bg-gray-300 overflow-hidden">
                   <img
-                    src={user?.avatar_url}
+                    src={friend?.avatar_url}
                     alt=""
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{user?.name}</p>
+                  <p className="text-sm font-medium">{friend?.name}</p>
                 </div>
               </div>
             </Link>
@@ -95,25 +125,47 @@ export default function OneToOneMessage() {
           <div>
             <div className="font-semibold">
               {otherUser?.userDetails.name}
-              <p className="text-muted-foreground">
-                {isConnected ? "Connected" : "Disconnected"}
-              </p>
             </div>
+            <p className="text-xs text-muted-foreground">
+               {isConnected ? "Connected" : "Reconnecting..."}
+            </p>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-          <div className="flex items-end gap-2">
+
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="flex flex-col gap-2"> 
             {messages.length === 0 ? (
-              <p style={{ color: "#aaa" }}>No messages yet...</p>
+              <p className="text-center text-gray-400 mt-10">No messages yet...</p>
             ) : null}
 
-            {messages.map((msg) => (
-              <div key={Math.random()} style={{ padding: "5px 0" }}>
-                {msg.text}
-              </div>
-            ))}
+            {messages.map((msg, index) => {
+                const isMe = msg.senderId === user?.id; 
+
+                return (
+                  <div 
+                    key={msg.id || index} 
+                    className={cn(
+                      "flex w-full",
+                      isMe ? "justify-end" : "justify-start"
+                    )}
+                  >
+                    <div 
+                      className={cn(
+                        "max-w-[70%] px-4 py-2 rounded-2xl text-sm break-words",
+                        isMe 
+                          ? "bg-blue-600 text-white rounded-br-none" 
+                          : "bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm" 
+                      )}
+                    >
+                      {msg.message}
+                    </div>
+                  </div>
+                );
+            })}
+            <div ref={scrollRef} />
           </div>
         </div>
+
         <form
           onSubmit={handleSubmit}
           className="h-16 border-t border-gray-200 bg-white flex items-center gap-3 px-4"
@@ -127,9 +179,8 @@ export default function OneToOneMessage() {
           />
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-medium transition disabled:opacity-50"
             disabled={isAssigning}
-            onClick={handleSubmit}
           >
             Send
           </button>

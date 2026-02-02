@@ -7,7 +7,7 @@ export async function forgot({
 }: z.infer<typeof forgotPasswordSchema>) {
   try {
     const response = await axios.post(
-      "http://127.0.0.1:3001/api/auth/forgot",
+      "http://localhost:3001/api/auth/forgot",
       {
         email
       },

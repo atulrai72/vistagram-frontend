@@ -4,7 +4,7 @@ import * as z from "zod";
 
 export async function reset({ otp, newPassword }: z.infer<typeof resetSchema>) {
   try {
-    const response = await axios.put("http://127.0.0.1:3001/api/auth/reset", {
+    const response = await axios.put("http://localhost:3001/api/auth/reset", {
       otp,
       newPassword,
     });

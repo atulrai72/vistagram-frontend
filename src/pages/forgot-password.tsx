@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { forgotPasswordSchema } from "@/schemas";
-import { Link } from "react-router-dom";
 import { useForgot } from "@/features/authentication/use-forgot";
 
 export function Forgot() {

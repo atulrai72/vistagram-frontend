@@ -1,7 +1,6 @@
 import {
   Home,
   Search,
-  Compass,
   SquarePlay,
   Send,
   Heart,
@@ -9,18 +8,18 @@ import {
   LogOut,
   Settings,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/features/authentication/use-user";
 import { SearchModal } from "@/pages/search";
+import { useLogout } from "@/features/authentication/use-logout";
 
 export default function SideBar() {
-  const navigate = useNavigate();
   const { user } = useUser();
+  const {logoutAPi} = useLogout();
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    logoutAPi();
   };
 
   return (

@@ -16,24 +16,24 @@ export const registerSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password must be more than 6 characters" })
-    .max(100, { message: "Password must be less than 100 characters" }),
+    .max(500, { message: "Password must be less than 500 characters" }),
 });
 
 export const forgotPasswordSchema = z.object({
   email: z
-    .email()
+    .email({message: "Email is required"})
     .max(50, { message: "email id not be greater than 50 characters" }),
 });
 
 export const resetSchema = z.object({
   otp: z.string().min(4, { message: "Otp is required" }),
-  newPassword: z.string().min(6, { message: "Password is required" }),
+  newPassword: z.string().min(6, { message: "Password is required" }).max(500, { message: "Password must be less than 500 characters" }),
 });
 
 export const commentSchema = z.object({
   comment: z
     .string()
-    .max(500, { message: "Please write your comment upto 500 characters" }),
+    .max(100, { message: "Please write your comment upto 100 characters" }),
   postId: z.number(),
 });
 

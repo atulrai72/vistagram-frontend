@@ -15,6 +15,7 @@ import { useCommentPost, useGetComments, useDeleteComment } from "./use-comment"
 import { Loader2 } from "lucide-react";
 import { useUser } from "../authentication/use-user";
 import { HiTrash } from "react-icons/hi2";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 
 // Add postId to props
 export function CommentDialog({
@@ -29,7 +30,6 @@ export function CommentDialog({
   const { commentApi, isPending: isPosting } = useCommentPost();
   const { data: comments, isLoading: isLoadingComments } =
     useGetComments(postId);
-  // console.log("comments ", comments.allComments);
 
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
@@ -73,9 +73,6 @@ export function CommentDialog({
           ) : (
             comments?.map((c: any, index: number) => (
               <div key={index} className="flex gap-3 items-start">
-                {/* Avatar Placeholder */}
-
-
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600 shrink-0">
                   {c.user?.avatar_url ? <img src={c.user?.avatar_url} alt={c.user?.name} className="w-8 h-8 rounded-full object-cover shrink-0" /> : c.user?.name?.[0] || "?"}
                 </div>
@@ -94,29 +91,38 @@ export function CommentDialog({
         </div>
 
         <form
+         id="comment-form"
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex items-center gap-2 border-t pt-4"
         >
+          <FieldGroup>
           <Controller
-            name="comment"
-            control={form.control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                placeholder="Add a comment..."
-                disabled={isPosting}
-                className="flex-1"
-                autoComplete="off"
+                name="comment"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <Input
+                      {...field}
+                      id="comment"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Add a comment..."
+                      disabled={isPosting}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
-            )}
-          />
           <Button
             type="submit"
             disabled={isPosting || !form.watch("comment")}
             size="sm"
+            form="comment-form"
           >
             {isPosting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post"}
           </Button>
+          </FieldGroup>
         </form>
       </DialogContent>
     </Dialog>

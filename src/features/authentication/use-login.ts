@@ -13,8 +13,7 @@ export function useLogin() {
     mutationFn: ({ email, password }: z.infer<typeof loginSchema>) =>
       loginApi({ email, password }),
     onSuccess: (user) => {
-      queryClient.setQueryData(["user"], user); // set the user in the query cache
-      localStorage.setItem("token", user.token)
+      queryClient.setQueryData(["user"], user);
       navigate("/dashboard", { replace: true });
     },
     onError: (error) => {
