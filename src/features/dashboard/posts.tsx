@@ -11,7 +11,7 @@ import { useToogleLike } from "../like/use-like";
 
 export default function Posts() {
   const { user } = useUser();
-  const { toogleLikeApi, isPending: isLiking} = useToogleLike();
+  const { toogleLikeApi, isPending: isLiking } = useToogleLike();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     usePosts();
 
@@ -40,10 +40,11 @@ export default function Posts() {
     return (
       <div className="p-10 text-center text-red-500">Error loading feed</div>
     );
-  
-    const handleToogleLike = (postId : number) => {
-        toogleLikeApi(postId);
-    }
+
+  const handleToogleLike = (postId: number) => {
+    toogleLikeApi(postId);
+  }
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-50 pb-20">
       {allPosts.map((post) => (
@@ -80,18 +81,18 @@ export default function Posts() {
           <div className="p-3">
             <div className="flex gap-4 mb-2">
               <button className="text-2xl">
-               <div className="flex gap-2">
-                 {post.hasLiked ? <div>
-                  <button onClick={() => handleToogleLike(post.id)} disabled={isLiking}>
-                 <FaHeart style={{ color: 'red' }}/>
-                 </button>
-                </div> : <div className=" hover:text-red-500"> 
-                  <button onClick={() => handleToogleLike(post.id)} disabled={isLiking}> <AiOutlineHeart /></button>
-                </div>}
-               <div>
-                 {post.likeCount}
-               </div>
-               </div>
+                <div className="flex gap-2">
+                  {post.hasLiked ? <div>
+                    <button onClick={() => handleToogleLike(post.id)} disabled={isLiking}>
+                      <FaHeart style={{ color: 'red' }} />
+                    </button>
+                  </div> : <div className=" hover:text-red-500">
+                    <button onClick={() => handleToogleLike(post.id)} disabled={isLiking}> <AiOutlineHeart /></button>
+                  </div>}
+                  <div>
+                    {post.likeCount}
+                  </div>
+                </div>
               </button>
               <CommentDialog postId={post.id}>
                 <button className="text-2xl hover:cursor-pointer">💬 {post?.commentCount}</button>

@@ -47,3 +47,4 @@ export const deletePost = async (postId: number) => {
   const { data } = await api.delete<Post>(`/posts/delete/${postId}`);
   return data;
 };
+

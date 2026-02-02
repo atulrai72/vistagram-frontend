@@ -22,3 +22,8 @@ export const assignRooms = async (id: number) => {
   const { data } = await api.post(`/chat/assign-room/${id}`);
   return data;
 };
+
+export const getMessages = async (id: number) => {
+  const { data } = await api.get(`/chat/messages/${id}`);
+  return data;
+};

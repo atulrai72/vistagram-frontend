@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useOtherUserProfile } from "@/features/profile/use-profile";
 import { useAssignRooms } from "@/features/chat/use-assign-rooms";
 import { useSocket } from "@/context/socket-context";
+import { useGetChat } from "@/features/chat/use-get-chat";
 
 interface Message {
   text: string;
@@ -13,24 +14,21 @@ interface Message {
 
 export default function OneToOneMessage() {
   const socket = useSocket();
+  const { user } = useUser();
   const { isAssigning } = useAssignRooms();
   const { id } = useParams();
-  const { user } = useUser();
   const { mutualUsers } = useMutualUser();
   const { otherUser } = useOtherUserProfile(Number(id));
-
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [messages, setMessages] = useState<Message[]>([{ text: "Hi" }]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const room = 1;
+  const {data} = useGetChat(Number(id));
 
   useEffect(() => {
-    console.log("insde the use effect");
     socket.on("connect", () => setIsConnected(true));
     socket.on("disconnect", () => setIsConnected(false));
 
     socket.on("recieve_message", (data: { text: string }) => {
-      console.log("data", data);
       setMessages((prev) => [...prev, { text: data.text }]);
     });
 
@@ -46,7 +44,7 @@ export default function OneToOneMessage() {
 
     if (inputRef.current && inputRef.current.value.trim() !== "") {
       const text = inputRef.current.value;
-      socket.emit("message", { text, room });
+      socket.emit("message", { text, userId: user?.id, room: Number(id) });
       inputRef.current.value = "";
     }
   }

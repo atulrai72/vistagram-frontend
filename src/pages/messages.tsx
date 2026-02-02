@@ -3,17 +3,27 @@ import { useAssignRooms } from "@/features/chat/use-assign-rooms";
 import { useMutualUser } from "@/features/chat/use-mutual-users";
 import { Link } from "react-router-dom";
 import { useSocket } from "@/context/socket-context";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function MessagesPage() {
   const socket = useSocket();
   const { user } = useUser();
+  const navigate = useNavigate();
+
   const { mutualUsers } = useMutualUser();
   const { assignRoomsApi } = useAssignRooms();
 
   const handleAssignRoom = async (id: number) => {
-    const data = await assignRoomsApi(id);
-    console.log("data", data);
-    socket.emit("join-room", data.roomId);
+    try {
+      const data = await assignRoomsApi(id);
+      socket.emit("join-room", data.roomId);
+      navigate(`/message/${data?.roomId}`);
+      toast.success("Room assigned successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to assign room");
+    }
   };
 
   return (
@@ -26,8 +36,7 @@ export default function MessagesPage() {
           <p className="px-4 pt-4 pb-2 text-sm font-semibold">Mutual friends</p>
 
           {mutualUsers?.map((user: any, index: number) => (
-            <Link
-              to={`/message/${user.id}`}
+            <div
               onClick={() => handleAssignRoom(user?.id)}
             >
               <div
@@ -47,7 +56,7 @@ export default function MessagesPage() {
                   {/* <p className="text-xs text-gray-600">{msg.status}</p>  */}
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </aside>

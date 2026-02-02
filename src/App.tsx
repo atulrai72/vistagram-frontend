@@ -17,6 +17,7 @@ import SpecificUserProfile from "./pages/user-profile";
 import MessagesPage from "./pages/messages";
 import OneToOneMessage from "./pages/message-one";
 import { SocketProvider } from "./context/socket-context";
+import ReelsPage from "./pages/reels";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,7 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/message" element={<MessagesPage />} />
               <Route path="/message/:id" element={<OneToOneMessage />} />
+              <Route path="/reels" element={<ReelsPage />} />
               <Route path="/create" element={<CreatePost />} />
               <Route path="/profile/:userId" element={<SpecificUserProfile />} />
             </Route>

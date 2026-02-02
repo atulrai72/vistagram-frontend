@@ -50,13 +50,13 @@ export default function SideBar() {
           </SearchModal>
         </div>
 
-        <div className="hidden md:flex items-center hover:cursor-pointer">
+        {/* <div className="hidden md:flex items-center hover:cursor-pointer">
           <Compass /> <span className="ml-2">Explore</span>
-        </div>
+        </div> */}
 
-        <div className="flex items-center hover:cursor-pointer">
+        <Link to="/reels" className="flex items-center hover:cursor-pointer">
           <SquarePlay /> <span className="hidden md:block ml-2">Reels</span>
-        </div>
+        </Link>
 
         <Link to="/message" className="flex items-center hover:cursor-pointer">
           <Send /> <span className="hidden md:block ml-2">Messages</span>
